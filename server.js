@@ -1,12 +1,24 @@
 'use strict';
+ //const express = require('express');
+const net = require('net');
+const uuid = require('uuid/v4');
+var server = require('http').Server();
 
-const io = require('socket.io')(3000);
+//const io = require('socket.io')(3000);
+ //const app = express();
 
-io.on('connection', (socket)=> {
-  console.log('A socket connected', socket.id);
-  socket.on('text', (load)=> {
-    console.log('Text was emmitted', load);
+const eventServer = net.createServer();
+const connectionPool = [];
+
+// This creates our Socket!! we should save these somewhere and use them in our HTTP handlers
+eventServer.on('connection', socket => {
+  console.log('Socket connected!!');
+  connectionPool.push(socket);
+});
+
+
+server.listen(3000, () => {
+  eventServer.listen(3001, () => {
+    console.log('API server up on 3000 : Event server up on 3001');
   });
-
-  io.emit('text',  { event: 'test', load: []});
 });
